@@ -15,15 +15,18 @@ case class Record(name: Option[String], params: List[String], output: List[Strin
 def liToRecord(li: Element): Record = {
   val symbol: Option[Element] = li >?> element("span.symbol")
   val name: Option[String] = symbol.flatMap { s => s  >?> text("span.name") }
-  // def processExtype = ???
-  val params: List[String] = (for {
+
+  def processExtype(spanClass: String): List[String] = (for {
     s <- symbol
-    sParams <- s >?> elementList("span.params")
+    sParams <- s >?> elementList(s"span.${spanClass}")
     sNames <- sParams.map { sp => sp >?> attr("name")("span.extype") }.sequence
   } yield sNames).toList.flatten
+
+  val params: List[String] = processExtype("params")
+  val output: List[String] = processExtype("result")
   val docString: Option[String] = symbol.flatMap { s => s >?> text("p.shortcomment") }
   val library: String = ""
-  Record(name, params, List(), docString, library)
+  Record(name, params, output, docString, library)
 }
 
 val browser = JsoupBrowser()  /*>  : net.ruippeixotog.scalascraper.browser.Browser = net.ruippeixotog.scalascraper.browser.Jsou…  */
