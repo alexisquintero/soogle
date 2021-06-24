@@ -12,6 +12,7 @@ lazy val root = (project in file("."))
       scalaTest % Test,
       scalaScrapper,
       fs2Core,
-      fs2Io
+      fs2Io,
+      catsEffects
     )
   )

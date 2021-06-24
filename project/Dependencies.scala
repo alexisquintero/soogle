@@ -2,6 +2,7 @@ import sbt._
 
 object V {
   val fs2 = "3.0.0"
+  val cats = "3.1.1"
 }
 
 object Dependencies {
@@ -9,4 +10,5 @@ object Dependencies {
   lazy val scalaScrapper = "net.ruippeixotog" %% "scala-scraper" % "2.2.1"
   lazy val fs2Core = "co.fs2" %% "fs2-core" % V.fs2
   lazy val fs2Io = "co.fs2" %% "fs2-io" % V.fs2
+  lazy val catsEffects = "org.typelevel" %% "cats-effect" % V.cats
 }

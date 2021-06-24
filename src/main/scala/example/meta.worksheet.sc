@@ -8,7 +8,6 @@ import net.ruippeixotog.scalascraper.model._
 import cats.data._
 import cats.implicits._
 
-
 // Use specific type for params and output
 case class Record(name: Option[String], params: List[String], output: List[String], docString: Option[String], library: String)
 
