@@ -1,20 +1,20 @@
 package soogle.scrapper
 
+import cats.implicits._
+import cats.effect.Async
+
+import fs2.{Stream, Pipe}
+
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
 import net.ruippeixotog.scalascraper.model._
-import cats.implicits._
 
-case class Record(
-    name: Option[String],
-    params: List[String],
-    output: List[String],
-    docString: Option[String],
-    library: String
-)
+import java.io.InputStream
 
 object Scrapper {
+  import soogle.data.Record
+
   def liToRecord(li: Element): Record = {
 
     val symbol: Option[Element] = li >?> element("span.symbol")
@@ -37,13 +37,12 @@ object Scrapper {
       s >?> text("p.shortcomment")
     }
 
-    val library: String = ""
-
-    Record(name, params, output, docString, library)
+    Record(name, params, output, docString)
   }
 
-  def urlToRecords(url: String): List[Record] = {
-    val elems: List[Element] = (JsoupBrowser().get(url) >?> elementList(
+  def isToRecords(is: InputStream): List[Record] = {
+    val doc = JsoupBrowser().parseInputStream(is)
+    val elems: List[Element] = (doc >?> elementList(
       "div.values.members"
     )).toList.flatten
 
@@ -52,6 +51,17 @@ object Scrapper {
       .flatMap { ce => ce >?> elementList("ol li") }
       .flatten
       .map(liToRecord)
+  }
+
+  def toRecs[F[_]: Async]: Pipe[F, (String, Stream[F, Byte]), List[Record]] = {
+    docFiles: Stream[F, (String, Stream[F, Byte])] =>
+      docFiles.flatMap { case (_, sis) => // TODO: do smtg with file name?
+        sis.through(fs2.io.toInputStream).flatMap { is =>
+          Stream {
+            isToRecords(is)
+          }
+        }
+      }
   }
 
 }

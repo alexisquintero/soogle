@@ -1,4 +1,4 @@
-package soogle.scrapper
+package soogle.docUnzip
 
 // https://gist.github.com/nmehitabel/a7c976ef8f0a41dfef88e981b9141075
 
@@ -14,7 +14,7 @@ import java.nio.file.{Path, Paths}
 import java.util.zip._
 
 // object docUnzip extends IOApp {
-object docUnzip {
+object DocUnzip {
 
   def entry[F[_]: Sync](
       zis: ZipInputStream
@@ -44,14 +44,20 @@ object docUnzip {
   def main[F[_]: Async](fileName: String): Stream[F, Unit] =
     Files[F]
       .readAll(Paths.get(s"${fileName}.jar"), 4096)
-      .through(unzip).flatMap { case (entry, is) =>
+      .through(unzip)
+      .flatMap { case (entry, is) =>
         val fullPath: Path = Paths.get(s"${fileName}/${entry}")
         is.through(Files[F].writeAll(fullPath))
       }
 
+  def getAllFiles[F[_]: Async](
+      fileName: String
+  ): Stream[F, (String, Stream[F, Byte])] =
+    Files[F].readAll(Paths.get(s"${fileName}.jar"), 4096).through(unzip)
+
   // TODO: filter by filetype
   // override def run(args: List[String]): IO[ExitCode] =
-  def run(): IO[ExitCode] =
-    main[IO]("scala-2-12-4").compile.drain.as(ExitCode.Success)
+  // def run(): IO[ExitCode] =
+  //   main[IO]("scala-2-12-4").compile.drain.as(ExitCode.Success)
 
 }
