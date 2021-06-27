@@ -3,6 +3,7 @@ import sbt._
 object V {
   val fs2 = "3.0.0"
   val cats = "3.1.1"
+  val elastic4sVersion = "7.12.3"
 }
 
 object Dependencies {
@@ -11,4 +12,6 @@ object Dependencies {
   lazy val fs2Core = "co.fs2" %% "fs2-core" % V.fs2
   lazy val fs2Io = "co.fs2" %% "fs2-io" % V.fs2
   lazy val catsEffects = "org.typelevel" %% "cats-effect" % V.cats
+  lazy val elastic4s = "com.sksamuel.elastic4s" %% "elastic4s-client-esjava" % V.elastic4sVersion
+  lazy val elastic4sTest = "com.sksamuel.elastic4s" %% "elastic4s-testkit" % V.elastic4sVersion % "test"
 }

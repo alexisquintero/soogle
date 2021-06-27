@@ -13,6 +13,8 @@ lazy val root = (project in file("."))
       scalaScrapper,
       fs2Core,
       fs2Io,
-      catsEffects
+      catsEffects,
+      elastic4s,
+      elastic4sTest
     )
   )

@@ -13,7 +13,8 @@ import java.io.InputStream
 import java.nio.file.{Path, Paths}
 import java.util.zip._
 
-object docUnzip extends IOApp {
+// object docUnzip extends IOApp {
+object docUnzip {
 
   def entry[F[_]: Sync](
       zis: ZipInputStream
@@ -48,7 +49,9 @@ object docUnzip extends IOApp {
         is.through(Files[F].writeAll(fullPath))
       }
 
-  override def run(args: List[String]): IO[ExitCode] =
+  // TODO: filter by filetype
+  // override def run(args: List[String]): IO[ExitCode] =
+  def run(): IO[ExitCode] =
     main[IO]("scala-2-12-4").compile.drain.as(ExitCode.Success)
 
 }
