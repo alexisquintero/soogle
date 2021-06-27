@@ -1,12 +1,5 @@
 import com.sksamuel.elastic4s.RequestSuccess
 import com.sksamuel.elastic4s.RequestFailure
-// name: Option[String]
-// params: List[String]
-// output: List[String]
-// docString: Option[String]
-// library: String
-// library-javadoc: String
-// po: params ++ output
 
 // import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.http.JavaClient
