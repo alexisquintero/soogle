@@ -41,7 +41,6 @@ object docUnzip extends IOApp {
     Files[F].readAll(Paths.get(fileName), 4096).through(unzip).flatMap {
       case (entry, is) =>
         val fullPath: Path = Paths.get(s"${fileName}/${entry}")
-        println(s"\nfullPath: $fullPath \n")
         Files[F].createDirectories(fullPath)
         is.through(Files[F].writeAll(fullPath))
     }
@@ -70,4 +69,5 @@ object docUnzip extends IOApp {
 // docUnzip.run(List()).unsafeRunSync()
 
 Option(Paths.get("qwe/asd").getParent)  /*>  : Option[Path] = Some(value = qwe)  */
-Option(Paths.get("asd").getParent)  /*>  : Option[Path] = None  */
+Option(Paths.get("asd").getParent)  /*  /*>  : Option[Path] = Some(value = qwe)  */>  : Option[Path] = None  */
+  /*>  : Option[Path] = None  */

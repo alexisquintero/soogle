@@ -20,48 +20,70 @@ object Es {
   val host = sys.env.getOrElse("ES_HOST", "127.0.0.1")
   val port = sys.env.getOrElse("ES_PORT", "9200")
   val clientProps = ElasticProperties(s"http://${host}:${port}")
-  val esClient = ElasticClient(JavaClient(clientProps)) // no side effecs here...
+  val esClient = ElasticClient(
+    JavaClient(clientProps)
+  ) // no side effecs here...
 
   val indexName = "methods"
 
   // TODO: create mapping if it doesn't exist
-  val mapping: IO[Response[CreateIndexResponse]] = IO.fromFuture {
-    IO.delay {
-      esClient.execute {
-        createIndex(indexName).mapping(
-          properties(
-            TextField("name"), // lowercase
-            TextField("params"), // lowercase
-            TextField("output"), // lowercase
-            TextField("docString"), // raw
-            TextField("library"), // keyword
-            TextField("version") // keyword
-            // TextField("paramsAndOutput"), // TODO: order important; from params ++ output
+  def mapping[F[_]: Async](): F[Response[CreateIndexResponse]] =
+    Async[F].fromFuture {
+      Sync[F].delay {
+        esClient.execute {
+          createIndex(indexName).mapping(
+            properties(
+              TextField("name"), // lowercase
+              TextField("params"), // lowercase
+              TextField("output"), // lowercase
+              TextField("docString"), // raw
+              TextField("library"), // keyword
+              TextField("version") // keyword
+              // TextField("paramsAndOutput"), // TODO: order important; from params ++ output
+            )
           )
-        )
+        }
       }
     }
-  }
 
-  def indexDoc(
+  def recToIndexRequest(library: String, libraryVersion: String, rec: Record) =
+    indexInto(indexName)
+      .fields(
+        "name" -> rec.name,
+        "params" -> rec.params,
+        "output" -> rec.output,
+        "docString" -> rec.docString,
+        "library" -> library,
+        "version" -> libraryVersion
+      )
+      .refresh(RefreshPolicy.Immediate)
+
+  def indexDoc[F[_]: Async](
       rec: Record,
       library: String,
       libraryVersion: String
-  ): IO[Response[IndexResponse]] =
-    IO.fromFuture {
-      IO.delay {
+  ): F[Response[IndexResponse]] =
+    Async[F].fromFuture {
+      Sync[F].delay {
         esClient.execute {
           // TODO: automate
-          indexInto(indexName)
-            .fields(
-              "name" -> rec.name,
-              "params" -> rec.params,
-              "output" -> rec.output,
-              "docString" -> rec.docString,
-              "library" -> library,
-              "version" -> libraryVersion
-            )
-            .refresh(RefreshPolicy.Immediate)
+          recToIndexRequest(library, libraryVersion, rec)
+        }
+      }
+    }
+
+  def bulkIndexDoc[F[_]: Async](
+      rec: List[Record],
+      library: String,
+      libraryVersion: String
+  // ): F[Response[BulkResponse]] =
+  ) =
+    Async[F].fromFuture {
+      Sync[F].delay {
+        esClient.execute {
+          bulk {
+            rec.map(recToIndexRequest(library, libraryVersion, _))
+          }
         }
       }
     }

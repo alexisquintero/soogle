@@ -13,12 +13,12 @@ object Main extends IOApp {
   def main[F[_]: Async](libName: String, libVersion: String) =
     DocUnzip
       .getAllFiles[F](s"${libName}-${libVersion}")
+      .filter { case (fileName, _) => fileName.endsWith("html") }
       .through(Scrapper.toRecs[F])
+      .filter { _.nonEmpty }
       .flatMap { case recs =>
-        Stream {
-          recs.map { rec =>
-            Es.indexDoc(rec, libName, libVersion)
-          }
+        Stream.eval {
+          Es.bulkIndexDoc[F](recs, libName, libVersion)
         }
       }
 
@@ -26,6 +26,6 @@ object Main extends IOApp {
   // make pipe to convert file to List[Record]
   // send to es
   override def run(args: List[String]): IO[ExitCode] =
-    Es.mapping >> main[IO]("scala", "2-12-4").compile.drain.as(ExitCode.Success)
+    Es.mapping[IO]() >> main[IO]("scala", "2-12-4").compile.drain.as(ExitCode.Success)
 
 }
