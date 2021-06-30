@@ -1,9 +1,13 @@
 import sbt._
+// import org.portablescala.sbtplatformdeps.PlatformDepsPlugin.autoImport._
+// import org.scalajs.sbtplugin.ScalaJSPlugin.autoImport._
 
 object V {
   val fs2 = "3.0.0"
   val cats = "3.1.1"
   val elastic4sVersion = "7.12.3"
+
+  val scalajsDom = "1.1.0"
 }
 
 object Dependencies {
@@ -14,4 +18,7 @@ object Dependencies {
   lazy val catsEffects = "org.typelevel" %% "cats-effect" % V.cats
   lazy val elastic4s = "com.sksamuel.elastic4s" %% "elastic4s-client-esjava" % V.elastic4sVersion
   lazy val elastic4sTest = "com.sksamuel.elastic4s" %% "elastic4s-testkit" % V.elastic4sVersion % "test"
+
+  // lazy val scalajsDom = "org.scala-js" %%% "scalajs-dom" % V.scalajsDom
 }
+

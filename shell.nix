@@ -7,5 +7,6 @@ pkgs.mkShell {
     coursier
     openjdk
     metals
+    nodejs
   ]);
 }

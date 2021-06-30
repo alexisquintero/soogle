@@ -1,13 +1,17 @@
 import Dependencies._
 
-ThisBuild / scalaVersion     := "2.13.5"
-ThisBuild / version          := "0.1.0-SNAPSHOT"
 ThisBuild / organization     := "com.example"
 ThisBuild / organizationName := "example"
 
-lazy val root = (project in file("."))
+def sharedSettings(proyectName: String) = Seq(
+  name := proyectName,
+  version := "0.1",
+  scalaVersion := "2.13.5"
+)
+
+lazy val scrapper = (project in file("scrapper"))
+  .settings(sharedSettings("scrapper"))
   .settings(
-    name := "soogle",
     libraryDependencies ++= Seq(
       scalaTest % Test,
       scalaScrapper,
@@ -18,3 +22,15 @@ lazy val root = (project in file("."))
       elastic4sTest
     )
   )
+
+lazy val frontend = (project in file("frontend"))
+  .settings(
+    sharedSettings("frontend")
+  ).settings(
+    scalaJSUseMainModuleInitializer := true,
+    libraryDependencies ++= Seq(
+      "org.scala-js" %%% "scalajs-dom" % "1.1.0"
+      /* scalajsDom */
+    )
+  )
+  .enablePlugins(ScalaJSPlugin)
