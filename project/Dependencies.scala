@@ -8,6 +8,7 @@ object V {
   val elastic4sVersion = "7.12.3"
 
   val scalajsDom = "1.1.0"
+  val scalajsReact = "1.7.7"
 }
 
 object Dependencies {

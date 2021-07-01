@@ -1,8 +1,5 @@
 import Dependencies._
 
-ThisBuild / organization     := "com.example"
-ThisBuild / organizationName := "example"
-
 def sharedSettings(proyectName: String) = Seq(
   name := proyectName,
   version := "0.1",
@@ -26,11 +23,17 @@ lazy val scrapper = (project in file("scrapper"))
 lazy val frontend = (project in file("frontend"))
   .settings(
     sharedSettings("frontend")
-  ).settings(
+  )
+  .settings(
     scalaJSUseMainModuleInitializer := true,
     libraryDependencies ++= Seq(
-      "org.scala-js" %%% "scalajs-dom" % "1.1.0"
-      /* scalajsDom */
+      "org.scala-js" %%% "scalajs-dom" % V.scalajsDom,
+      "com.github.japgolly.scalajs-react" %%% "core" % V.scalajsReact
+    ),
+    npmDependencies in Compile ++= Seq(
+      "react" -> "17.0.2",
+      "react-dom" -> "17.0.2"
     )
   )
   .enablePlugins(ScalaJSPlugin)
+  .enablePlugins(ScalaJSBundlerPlugin)

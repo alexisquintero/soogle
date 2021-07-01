@@ -16,6 +16,15 @@ services:
         hard: 65536
     volumes:
       - soogleEs:/usr/share/elasticsearch/data
+  scalajs:
+    build:
+      context: ./docker/frontend
+      dockerfile: Dockerfile
+    container_name: scalajs
+    volumes:
+      - .:/app
+      - sbtDeps:/root/.sbt
 
 volumes:
   soogleEs:
+  sbtDeps:
