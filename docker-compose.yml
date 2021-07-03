@@ -24,7 +24,9 @@ services:
     volumes:
       - .:/app
       - sbtDeps:/root/.sbt
+      - sbtCache:/root/.cache
 
 volumes:
   soogleEs:
   sbtDeps:
+  sbtCache:

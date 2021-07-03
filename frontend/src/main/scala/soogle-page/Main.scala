@@ -1,7 +1,13 @@
 package sooglePage
 
+import org.scalajs.dom.document
+
+import sooglePage.components.MainPage
+
 object Page {
+
   def main(args: Array[String]): Unit = {
-    println("ello")
+    MainPage.page().renderIntoDOM(document.body)
+    ()
   }
 }
