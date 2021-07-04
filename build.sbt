@@ -30,10 +30,10 @@ lazy val frontend = (project in file("frontend"))
       "org.scala-js" %%% "scalajs-dom" % V.scalajsDom,
       "com.github.japgolly.scalajs-react" %%% "core" % V.scalajsReact
     ),
-    npmDependencies in Compile ++= Seq(
+    Compile / npmDependencies ++= Seq(
       "react" -> "17.0.2",
       "react-dom" -> "17.0.2"
-    )
-  )
+    ),
+    webpackDevServerExtraArgs := Seq("--host", "0.0.0.0", "--content-base", "/app/frontend/resources"))
   .enablePlugins(ScalaJSPlugin)
   .enablePlugins(ScalaJSBundlerPlugin)
