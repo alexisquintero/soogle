@@ -28,7 +28,8 @@ lazy val frontend = (project in file("frontend"))
     scalaJSUseMainModuleInitializer := true,
     libraryDependencies ++= Seq(
       "org.scala-js" %%% "scalajs-dom" % V.scalajsDom,
-      "com.github.japgolly.scalajs-react" %%% "core" % V.scalajsReact
+      "com.github.japgolly.scalajs-react" %%% "core" % V.scalajsReact,
+      "com.github.japgolly.scalajs-react" %%% "extra" % V.scalajsReact
     ),
     Compile / npmDependencies ++= Seq(
       "react" -> "17.0.2",
