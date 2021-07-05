@@ -28,20 +28,20 @@ def liToRecord(li: Element): Record = {
   Record(name, params, output, docString, library)
 }
 
-val browser = JsoupBrowser()  /*>  : net.ruippeixotog.scalascraper.browser.Browser = net.ruippeixotog.scalascraper.browser.Jsou…  */
-val doc = browser.get("https://www.scala-lang.org/api/2.13.6/scala/math/Numeric.html")  /*>  : browser.DocumentType = JsoupDocu…  */
+val browser = JsoupBrowser()
+val doc = browser.get("https://www.scala-lang.org/api/2.13.6/scala/math/Numeric.html")
 
-val header = doc >?> text("#header")  /*>  : Option[String] = None  */
-val body = doc >> text("body")  /*>  : String = """Scala Standard Library2.13.6 < Back  Packages  package root This is the d…  */
+val header = doc >?> text("#header")
+val body = doc >> text("body")
 
-val elems = doc >?> elementList("div.values.members")  /*>  : Option[List[Element]] = Some(value = List(JsoupElement(underlying…  */
+val elems = doc >?> elementList("div.values.members")
 // remove style display none
 val conc = elems
             .toList
-            .flatten  /*>  : List[net.ruippeixotog.scalascraper.model.Element] = List(JsoupElement(underlying = <div class="val…  */
-            .filter { e => e >?> text("h3") == Option("Concrete Value Members") }  /*>  : List[net.ruippeixotog.scalascraper.mod…  */
-            .flatMap { ce => ce >?> elementList("ol li") }    /*>  : List[List[net.ruippeixotog.scalascraper.model.Element]] = List(…  */  /*>  : List[List[Element]…  */
-            .flatten  /*>  : List[Element] = List(JsoupElement(underlying = <li class="indented0 " name="scala.AnyRef#!=" group…  */
-            .map(liToRecord)  /*>  : List[Record] = List(Record(name = Some(value = "!="),params = List(),output = List(),docSt…  */
+            .flatten
+            .filter { e => e >?> text("h3") == Option("Concrete Value Members") }
+            .flatMap { ce => ce >?> elementList("ol li") }
+            .flatten
+            .map(liToRecord)
 
-conc.tail.tail.tail.tail.tail.head  /*>  : Record = Record(name = Some(value = "abs"),params = List("scala.math.Numeric.T"),out…  */
+conc.tail.tail.tail.tail.tail.head

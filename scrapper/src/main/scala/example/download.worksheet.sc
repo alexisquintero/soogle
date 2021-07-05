@@ -30,4 +30,4 @@ object docDownload extends IOApp {
 
 // import cats.effect.unsafe.implicits.global
 
-// docDownload.run(List()).unsafeRunSync()  /*>  : ExitCode = ExitCode(code = 0)  */
+// docDownload.run(List()).unsafeRunSync()

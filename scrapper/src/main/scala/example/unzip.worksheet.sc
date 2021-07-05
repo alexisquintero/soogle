@@ -63,11 +63,10 @@ object docUnzip extends IOApp {
 
 // import cats.effect.unsafe.implicits.global
 
-// asd.run(List()).unsafeRunSync() /*>  : ExitCode = ExitCode(code = 0)  */
+// asd.run(List()).unsafeRunSync()
 // val a = Files[IO].readAll(Paths.get("scala-2-12-4.jar"), 4096).compile.drain.unsafeRunSync()
 
 // docUnzip.run(List()).unsafeRunSync()
 
-Option(Paths.get("qwe/asd").getParent)  /*>  : Option[Path] = Some(value = qwe)  */
-Option(Paths.get("asd").getParent)  /*  /*>  : Option[Path] = Some(value = qwe)  */>  : Option[Path] = None  */
-  /*>  : Option[Path] = None  */
+Option(Paths.get("qwe/asd").getParent)
+Option(Paths.get("asd").getParent)
