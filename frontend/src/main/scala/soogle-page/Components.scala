@@ -28,7 +28,8 @@ object MainPage {
           Search.searchInputs(ss),
           state.esResponse match {
             case None => Welcome.welcome()
-            case Some(_) => SearchResults.searchResults()
+            case Some(esResponse) =>
+              SearchResults.searchResults(esResponse.hits)
           }
         )
       )
