@@ -7,7 +7,7 @@ import sooglePage.components.MainPage
 object Page {
 
   def main(args: Array[String]): Unit = {
-    MainPage.page().renderIntoDOM(document.body)
+    MainPage.page().renderIntoDOM(document.getElementById("root"))
     ()
   }
 }

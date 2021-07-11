@@ -8,4 +8,4 @@ EXPOSE 8080
 
 WORKDIR /app
 
-CMD ["sbt", "project frontend", "Compile / fastOptJS / startWebpackDevServer", "~fastOptJS"]
+CMD ["sbt", "project frontend", "Compile/fastOptJS/startWebpackDevServer", "~fastOptJS"]

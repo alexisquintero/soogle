@@ -7,13 +7,16 @@ import japgolly.scalajs.react.vdom.html_<^._
 import sooglePage.components.search.Search
 import sooglePage.components.welcome.Welcome
 import sooglePage.components.sidebar.Sidebar
+import sooglePage.components.searchResults.SearchResults
+
+import sooglePage.appState.AppState
 
 object MainPage {
 
-  final class Backend($ : BackendScope[Unit, String]) {
+  final class Backend($ : BackendScope[Unit, AppState]) {
     private val setStateFn = StateSnapshot.withReuse.prepareVia($)
 
-    def render(state: String): VdomElement = {
+    def render(state: AppState): VdomElement = {
       val ss = setStateFn(state)
 
       <.div(
@@ -23,7 +26,10 @@ object MainPage {
         <.div(
           ^.width := 100.pct,
           Search.searchInputs(ss),
-          Welcome.welcome()
+          state.esResponse match {
+            case None => Welcome.welcome()
+            case Some(_) => SearchResults.searchResults()
+          }
         )
       )
     }
@@ -32,7 +38,7 @@ object MainPage {
   val page = {
     ScalaComponent
       .builder[Unit]
-      .initialState("")
+      .initialState(AppState("", None))
       .renderBackend[Backend]
       .build
   }

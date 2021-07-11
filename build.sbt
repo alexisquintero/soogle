@@ -12,9 +12,9 @@ lazy val shared = crossProject(JSPlatform, JVMPlatform)
   .settings(sharedSettings("shared"))
   .settings(
     libraryDependencies ++= Seq(
-      "io.circe" %%% "circe-core" % V.circeVersion,
-      "io.circe" %%% "circe-generic" % V.circeVersion,
-      "io.circe" %%% "circe-parser" % V.circeVersion
+      "io.circe" %%% "circe-core" % V.circe,
+      "io.circe" %%% "circe-generic" % V.circe,
+      "io.circe" %%% "circe-parser" % V.circe
     )
   )
   .settings(scalacOptions ++= Seq("-Ymacro-annotations"))
@@ -48,7 +48,10 @@ lazy val frontend = (project in file("frontend"))
       "org.scala-js" %%% "scalajs-dom" % V.scalajsDom,
       "com.github.japgolly.scalajs-react" %%% "core" % V.scalajsReact,
       "com.github.japgolly.scalajs-react" %%% "extra" % V.scalajsReact,
-      "io.circe" %%% "circe-parser" % V.circeVersion
+      "com.github.japgolly.scalajs-react" %%% "ext-monocle" % V.scalajsReact,
+      "io.circe" %%% "circe-parser" % V.circe,
+      "dev.optics" %% "monocle-core"  % V.monocle,
+      "dev.optics" %% "monocle-macro" % V.monocle
     ),
     Compile / npmDependencies ++= Seq(
       "react" -> "17.0.2",
