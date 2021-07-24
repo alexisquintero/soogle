@@ -11,8 +11,7 @@ object SingleSearchResult {
       .builder[InnerHit]
       .render_P { case InnerHit(_, _, _, _, source) =>
         <.div(
-          ^.key := source.name
-            .getOrElse(List())
+          ^.key := List(source.name)
             .concat(source.params)
             .concat(source.output)
             .mkString,
@@ -28,7 +27,7 @@ object SingleSearchResult {
               <.span(
                 ^.classSet("name" -> true),
                 ^.display := "block",
-                source.name.getOrElse(List()).mkString(",")
+                source.name
               ),
               source.params.concat(source.output).mkString(" -> ")
             )

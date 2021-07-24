@@ -15,8 +15,9 @@ object Main extends IOApp {
       .getAllFiles[F](s"${libName}-${libVersion}")
       .filter { case (fileName, _) => fileName.endsWith("html") }
       .through(Scrapper.toRecs[F])
-      .filter { _.nonEmpty }
-      .flatMap { case recs =>
+      .chunkN(1000, true)
+      .flatMap { chunk =>
+        val recs = Stream.chunk(chunk).compile.toList
         Stream.eval {
           Es.bulkIndexDoc[F](recs, libName, libVersion)
         }

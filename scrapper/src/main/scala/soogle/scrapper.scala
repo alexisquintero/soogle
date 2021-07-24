@@ -13,17 +13,18 @@ import net.ruippeixotog.scalascraper.model._
 import java.io.InputStream
 
 object Scrapper {
-  import soogle.data.Record
+  import shared.data.Source
 
-  def liToRecord(li: Element): Record = {
+  def liToSource(li: Element): Source = {
 
-    val symbol: Option[Element] = li >?> element("span.symbol")
+    val permalink: String =
+      li >> element("span.permalink") >> attr("href")("a") // TODO: better type
+    val symbol: Element = li >> element("span.symbol")
 
-    val name: Option[String] = symbol.flatMap { s => s >?> text("span.name") }
+    val name = symbol >> text("span.name")
 
     def processExtype(spanClass: String): List[String] = (for {
-      s <- symbol
-      sParams <- s >?> elementList(s"span.${spanClass}")
+      sParams <- symbol >?> elementList(s"span.${spanClass}")
       sNames <- sParams.map { sp =>
         sp >?> attr("name")("span.extype")
       }.sequence
@@ -33,33 +34,39 @@ object Scrapper {
 
     val output: List[String] = processExtype("result")
 
-    val docString: Option[String] = symbol.flatMap { s =>
-      s >?> text("p.shortcomment")
+    val docString: Option[String] = symbol >?> text("p.shortcomment")
+
+    Source(name, params, docString, "", "", output, permalink) // TODO: fix ""
+  }
+
+  def isToSources[F[_]](is: InputStream): Stream[F, Source] = {
+    val doc = JsoupBrowser().parseInputStream(is)
+    val elems: Stream[F, Element] = Stream.emits {
+      (doc >?> elementList("div.values.members")).toList.flatten
     }
 
-    Record(name, params, output, docString)
-  }
-
-  def isToRecords(is: InputStream): List[Record] = {
-    val doc = JsoupBrowser().parseInputStream(is)
-    val elems: List[Element] = (doc >?> elementList(
-      "div.values.members"
-    )).toList.flatten
-
     elems
-      .filter { e => e >?> text("h3") == Option("Concrete Value Members") }
-      .flatMap { ce => ce >?> elementList("ol li") }
-      .flatten
-      .map(liToRecord)
+      .filter { e => e >?> text("h3") == Option("Value Members") }
+      .flatMap { ce =>
+        Stream.emits {
+          (ce >?> elementList("ol li")).toList.flatten
+        }
+      }
+      .filter { pre =>
+        val permalink = pre >?> element("span.permalink")
+        val symbol = pre >?> element("span.symbol")
+        val name = symbol.flatMap { s => s >?> text("span.name") }
+
+        name != None && permalink != None && symbol != None
+      }
+      .map(liToSource)
   }
 
-  def toRecs[F[_]: Async]: Pipe[F, (String, Stream[F, Byte]), List[Record]] = {
+  def toRecs[F[_]: Async]: Pipe[F, (String, Stream[F, Byte]), Source] = {
     docFiles: Stream[F, (String, Stream[F, Byte])] =>
-      docFiles.flatMap { case (_, sis) => // TODO: do smtg with file name?
+      docFiles.flatMap { case (_, sis) =>
         sis.through(fs2.io.toInputStream).flatMap { is =>
-          Stream {
-            isToRecords(is)
-          }
+          isToSources[F](is)
         }
       }
   }

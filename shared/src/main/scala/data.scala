@@ -4,7 +4,7 @@ import io.circe._
 import io.circe.generic.JsonCodec
 
 @JsonCodec
-case class Shard(
+final case class Shard(
     total: Int,
     successful: Int,
     skipped: Int,
@@ -12,23 +12,23 @@ case class Shard(
 )
 
 @JsonCodec
-case class Total(
+final case class Total(
     value: Int,
     relation: String
 )
 
-// TODO: use shared Record
 @JsonCodec
-case class Source(
-    name: Option[List[String]], // TODO: fix
+final case class Source(
+    name: String,
     params: List[String],
     docString: Option[String],
     version: String,
     library: String,
-    output: List[String]
+    output: List[String],
+    link: String
 )
 
-case class InnerHit(
+final case class InnerHit(
     index: String,
     hType: String,
     id: String,
@@ -36,25 +36,25 @@ case class InnerHit(
     source: Source
 )
 
-object InnerHit {
+final object InnerHit {
   implicit val decodeInnerHit: Decoder[InnerHit] =
     Decoder.forProduct5("_index", "_type", "_id", "_score", "_source")(
       InnerHit.apply
     )
 }
 
-case class Hit(
+final case class Hit(
     total: Total,
     maxScore: Double,
     hits: List[InnerHit]
 )
 
-object Hit {
+final object Hit {
   implicit val decodeHit: Decoder[Hit] =
     Decoder.forProduct3("total", "max_score", "hits")(Hit.apply)
 }
 
-case class EsResponse(
+final case class EsResponse(
     took: Int,
     timedOut: Boolean,
     shards: Shard,

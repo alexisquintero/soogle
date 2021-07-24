@@ -15,7 +15,7 @@ import com.sksamuel.elastic4s.requests.common.RefreshPolicy
 
 object Es {
   import com.sksamuel.elastic4s.ElasticDsl._
-  import soogle.data.Record
+  import shared.data.Source
 
   val host = sys.env.getOrElse("ES_HOST", "127.0.0.1")
   val port = sys.env.getOrElse("ES_PORT", "9200")
@@ -46,7 +46,7 @@ object Es {
       }
     }
 
-  def recToIndexRequest(library: String, libraryVersion: String, rec: Record) =
+  def recToIndexRequest(library: String, libraryVersion: String, rec: Source) =
     indexInto(indexName)
       .fields(
         "name" -> rec.name,
@@ -59,7 +59,7 @@ object Es {
       .refresh(RefreshPolicy.Immediate)
 
   def indexDoc[F[_]: Async](
-      rec: Record,
+      rec: Source,
       library: String,
       libraryVersion: String
   ): F[Response[IndexResponse]] =
@@ -73,7 +73,7 @@ object Es {
     }
 
   def bulkIndexDoc[F[_]: Async](
-      rec: List[Record],
+      rec: List[Source],
       library: String,
       libraryVersion: String
   // ): F[Response[BulkResponse]] =
